@@ -239,7 +239,7 @@
                                 Console.WriteLine("Введите целое число для обработки методом:");
                                 int num16 = int.Parse(Console.ReadLine());
                                 Console.WriteLine("Результат работы метода:");
-                                Console.WriteLine(Tool1.chet(33));
+                                Console.WriteLine(Tool1.chet(num16));
                             }
                             catch (Exception ex)
                             {
@@ -371,3 +371,4 @@
     }
 
 }
+
