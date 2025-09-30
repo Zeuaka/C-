@@ -8,6 +8,7 @@ https://github.com/user-attachments/assets/3f4d6125-508c-4201-8d30-c0118001bf44
 Ниже представлены примеры работа программы в каждом из разделов:
 
 "Методы"
+
 Задание 1:
 
 https://github.com/user-attachments/assets/3808c43b-3240-4c31-a7cf-3b6373fd3b4e
