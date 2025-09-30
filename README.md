@@ -63,12 +63,13 @@ https://github.com/user-attachments/assets/67fa7bc3-b802-4f5b-b00d-9236fc261304
 
 Задание 5:
 
-
+<img width="600" height="117" alt="image" src="https://github.com/user-attachments/assets/663bea88-b0a5-4268-8df7-364c3f16b644" />
 
 Задание 7:
 
-
+<img width="590" height="203" alt="image" src="https://github.com/user-attachments/assets/43522212-d1fd-47cb-ba26-6d447413a0f1" />
 
 Задание 9:
 
+<img width="622" height="238" alt="image" src="https://github.com/user-attachments/assets/949b64c7-0152-40d2-8758-2b288cfde16f" />
 
