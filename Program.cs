@@ -206,7 +206,7 @@
                                 Console.WriteLine("Введите целое число для обработки методом:");
                                 int num14 = int.Parse(Console.ReadLine());
                                 Console.WriteLine("Результат работы метода:");
-                                Console.WriteLine(Tool1.day(3));
+                                Console.WriteLine(Tool1.day(num14));
                             }
                             catch (Exception ex)
                             {
@@ -369,4 +369,5 @@
             }
         }
     }
+
 }
