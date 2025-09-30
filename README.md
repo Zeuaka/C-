@@ -73,3 +73,25 @@ https://github.com/user-attachments/assets/67fa7bc3-b802-4f5b-b00d-9236fc261304
 
 <img width="622" height="238" alt="image" src="https://github.com/user-attachments/assets/949b64c7-0152-40d2-8758-2b288cfde16f" />
 
+"Массивы"
+
+Задание 1:
+
+<img width="368" height="430" alt="image" src="https://github.com/user-attachments/assets/4bc269c7-de34-47da-82d2-e4e90dc26a6b" />
+
+Задание 3:
+
+<img width="405" height="411" alt="image" src="https://github.com/user-attachments/assets/a6c086c7-abfc-49fa-af77-53eec55fe11b" />
+
+Задание 5:
+
+<img width="667" height="582" alt="image" src="https://github.com/user-attachments/assets/50fbf1bf-1a2a-4012-8223-f745a8287849" />
+
+Задание 7:
+
+<img width="386" height="359" alt="image" src="https://github.com/user-attachments/assets/e51648b9-697b-475f-b257-26a530d330e7" />
+
+Задание 9:
+
+<img width="405" height="392" alt="image" src="https://github.com/user-attachments/assets/485413ef-1f8f-4f04-90aa-17d72c952ef7" />
+
