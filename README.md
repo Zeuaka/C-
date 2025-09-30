@@ -51,4 +51,24 @@ https://github.com/user-attachments/assets/67fa7bc3-b802-4f5b-b00d-9236fc261304
 
 <img width="548" height="118" alt="image" src="https://github.com/user-attachments/assets/81cd53cc-bd39-40e0-a480-4833c825e5c4" />
 
+"Циклы"
+
+Задание 1:
+
+<img width="556" height="118" alt="image" src="https://github.com/user-attachments/assets/0b5e6522-81af-4cf1-a385-1abce2d68221" />
+
+Задание 3:
+
+<img width="666" height="120" alt="image" src="https://github.com/user-attachments/assets/8ed1e7bc-bb2e-4062-af22-561028f990fe" />
+
+Задание 5:
+
+
+
+Задание 7:
+
+
+
+Задание 9:
+
 
