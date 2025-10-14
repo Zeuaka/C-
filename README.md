@@ -231,8 +231,28 @@ City[] neighbourCities в который будут передаваться г�
 
 ### Задание 2
 
-https://github.com/user-attachments/assets/ba9dfd24-ac84-4fd1-8b4d-f90d7f25cdcf
+<img width="665" height="722" alt="image" src="https://github.com/user-attachments/assets/82940087-eff5-42ed-93ea-6ba0ea539ffa" />
+
 
 ### Задание 3
 
+<img width="603" height="554" alt="image" src="https://github.com/user-attachments/assets/02a0000c-d3d3-49b4-af14-bd0385c243db" />
+
+
+### Задание 4
+
+<img width="936" height="259" alt="image" src="https://github.com/user-attachments/assets/4920177a-8b14-47f0-bc38-7834ffae61e8" />
+
+
+### Задание 5
+
+<img width="364" height="519" alt="image" src="https://github.com/user-attachments/assets/95fb6874-06a8-4b80-ab3e-f0a85530cd51" />
+
+<img width="383" height="417" alt="image" src="https://github.com/user-attachments/assets/044dab5f-2a33-49f8-86ac-32b50c17f4b3" />
+
+<img width="316" height="465" alt="image" src="https://github.com/user-attachments/assets/0a47c228-9e84-4226-a298-623aa04dce17" />
+
+<img width="422" height="499" alt="image" src="https://github.com/user-attachments/assets/5ec4a41e-69de-4a70-a038-cf2cae5c7e89" />
+
+<img width="430" height="526" alt="image" src="https://github.com/user-attachments/assets/a4734df3-6a2b-410d-b003-12bdea5742d2" />
 
