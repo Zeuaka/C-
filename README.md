@@ -29,6 +29,31 @@ LINQ.cs для формирования структуры LINQ запросов
 
 ---
 
+### ***Файл: ProductActs.cs***
+
+### Класс ProductMovement
+
+Хранит информацию о всех операциях с товарами (поступления, продажи, возвраты)
+
+### Класс Product
+
+Хранит основные характеристики товаров
+
+### Класс Store
+
+Хранит информацию о магазинах
+
+### Класс Category
+
+Хранит категории товаров с возрастными ограничениями
+
+
+
+Так же для каждого класса описаны методы ToString для корректного вывода обьектов классов
+
+---
+
+
 ### ***Файл: LINQ.cs***
 
 Основные компоненты класса:
@@ -263,70 +288,26 @@ _nextMovementId, _nextProductArticle, _nextStoreId, _nextCategoryId — счет
 
 ---
 
-
 ---
 
 ---
 
-Ниже представлены примеры работы программы в каждом из разделов заданий.
+Ниже представлены примеры работы программы.
 
 
-### Задание 1
-
-<img width="411" height="94" alt="image" src="https://github.com/user-attachments/assets/74aa42e9-788a-4d26-bfc4-b2bf5297d2d1" />
+<img width="386" height="313" alt="image" src="https://github.com/user-attachments/assets/596e7e97-15bd-4126-b92f-c6b3f2b6db19" />
 
 
-
-### Задание 2
-
-<img width="425" height="89" alt="image" src="https://github.com/user-attachments/assets/b5956f5a-1045-4100-9127-31b926d6df88" />
+<img width="1105" height="353" alt="image" src="https://github.com/user-attachments/assets/1decb73c-4717-440d-8683-5fc06080771f" />
 
 
-
-### Задание 3
-
-<img width="448" height="279" alt="image" src="https://github.com/user-attachments/assets/d94977e5-cb20-46b0-82f8-475776fbd8bc" />
+<img width="880" height="313" alt="image" src="https://github.com/user-attachments/assets/40fc06f1-3aee-408d-9da5-27bdcb511252" />
 
 
-
-### Задание 4
-
-<img width="442" height="245" alt="image" src="https://github.com/user-attachments/assets/e366a859-aa04-4058-b42d-eb900a904ec5" />
+<img width="522" height="281" alt="image" src="https://github.com/user-attachments/assets/19666eda-5447-4494-8007-befabdd05233" />
 
 
-### Содержимое TXT файла :
-
-<img width="520" height="97" alt="image" src="https://github.com/user-attachments/assets/85ea870a-64fd-49eb-9c26-509634929c6f" />
-
-
-### Задание 5
-
-<img width="397" height="222" alt="image" src="https://github.com/user-attachments/assets/c4306939-c09e-4567-bf9b-6a8daf15cd33" />
-
-
-### Содержимое TXT файла students :
-
-<img width="393" height="190" alt="image" src="https://github.com/user-attachments/assets/7b203ec2-efd4-45eb-9a81-58a75554e7fb" />
-
-
-### Содержимое TXT файла logins :
-
-<img width="387" height="171" alt="image" src="https://github.com/user-attachments/assets/e669e792-6691-4ef6-96f8-d86608953cd1" />
-
-
-### Задания 6-7
-
-<img width="536" height="247" alt="image" src="https://github.com/user-attachments/assets/785fcf4f-32e7-44ec-8002-98dd9b7e2355" />
-
-
-<img width="544" height="237" alt="image" src="https://github.com/user-attachments/assets/81574576-c911-46e3-9e30-bdc7f19d2abc" />
-
-
-<img width="420" height="258" alt="image" src="https://github.com/user-attachments/assets/20a8cd45-6889-4c22-8b31-96e766faafa2" />
-
-
-<img width="393" height="310" alt="image" src="https://github.com/user-attachments/assets/6ab29f8c-af2c-4274-a6ba-d1ed842490fd" />
-
+<img width="414" height="286" alt="image" src="https://github.com/user-attachments/assets/2ec901b3-efcf-4525-b470-1ccef5476ecd" />
 
 
 
