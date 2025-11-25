@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using OfficeOpenXml;
+using Aspose.Cells;
 
 public class DatabaseManager
 {
@@ -23,9 +23,6 @@ public class DatabaseManager
         _products = new List<Product>();
         _stores = new List<Store>();
         _categories = new List<Category>();
-        
-        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
         CreateTestData();
     }
     private int GetNextMovementId()
@@ -83,6 +80,41 @@ public class DatabaseManager
         _nextCategoryId = maxId;
         return _nextCategoryId;
     }
+    private void UpdateCounters()
+    {
+        _nextMovementId = 1;
+        foreach (var movement in _movements)
+        {
+            if (movement.OperationId >= _nextMovementId)
+            {
+                _nextMovementId = movement.OperationId + 1;
+            }
+        }
+        _nextProductArticle = 1001;
+        foreach (var product in _products)
+        {
+            if (product.Article >= _nextProductArticle)
+            {
+                _nextProductArticle = product.Article + 1;
+            }
+        }
+        _nextStoreId = 1;
+        foreach (var store in _stores)
+        {
+            if (store.Id >= _nextStoreId)
+            {
+                _nextStoreId = store.Id + 1;
+            }
+        }
+        _nextCategoryId = 1;
+        foreach (var category in _categories)
+        {
+            if (category.Id >= _nextCategoryId)
+            {
+                _nextCategoryId = category.Id + 1;
+            }
+        }
+    }
 
     public void ReadFromExcel()
     {
@@ -98,81 +130,86 @@ public class DatabaseManager
             _products.Clear();
             _stores.Clear();
             _categories.Clear();
-
-            using (var package = new ExcelPackage(new FileInfo(_filePath)))
+            Workbook workbook = new Workbook(_filePath);
+            Worksheet categoriesSheet = workbook.Worksheets["Категория"];
+            if (categoriesSheet != null && categoriesSheet.Cells.MaxDataRow >= 0)
             {
-                var categoriesSheet = package.Workbook.Worksheets["Категория"];
-                if (categoriesSheet != null && categoriesSheet.Dimension != null)
+                for (int row = 1; row <= categoriesSheet.Cells.MaxDataRow; row++)
                 {
-                    for (int row = 2; row <= categoriesSheet.Dimension.End.Row; row++)
+                    if (categoriesSheet.Cells[row, 0].Value != null)
                     {
-                        if (categoriesSheet.Cells[row, 1].Value != null)
-                        {
-                            _categories.Add(new Category(
-                                Convert.ToInt32(categoriesSheet.Cells[row, 1].Value),
-                                categoriesSheet.Cells[row, 2].Value?.ToString() ?? "",
-                                categoriesSheet.Cells[row, 3].Value?.ToString() ?? ""
-                            ));
-                        }
+                        _categories.Add(new Category(
+                            Convert.ToInt32(categoriesSheet.Cells[row, 0].Value),
+                            categoriesSheet.Cells[row, 1].Value?.ToString() ?? "",
+                            categoriesSheet.Cells[row, 2].Value?.ToString() ?? ""
+                        ));
                     }
-                    Console.WriteLine($"Загружено категорий: {_categories.Count}");
                 }
-                var storesSheet = package.Workbook.Worksheets["Магазин"];
-                if (storesSheet != null && storesSheet.Dimension != null)
-                {
-                    for (int row = 2; row <= storesSheet.Dimension.End.Row; row++)
-                    {
-                        if (storesSheet.Cells[row, 1].Value != null)
-                        {
-                            _stores.Add(new Store(
-                                Convert.ToInt32(storesSheet.Cells[row, 1].Value),
-                                storesSheet.Cells[row, 2].Value?.ToString() ?? "",
-                                storesSheet.Cells[row, 3].Value?.ToString() ?? ""
-                            ));
-                        }
-                    }
-                    Console.WriteLine($"Загружено магазинов: {_stores.Count}");
-                }
-                var productsSheet = package.Workbook.Worksheets["Товар"];
-                if (productsSheet != null && productsSheet.Dimension != null)
-                {
-                    for (int row = 2; row <= productsSheet.Dimension.End.Row; row++)
-                    {
-                        if (productsSheet.Cells[row, 1].Value != null)
-                        {
-                            _products.Add(new Product(
-                                Convert.ToInt32(productsSheet.Cells[row, 1].Value),
-                                Convert.ToInt32(productsSheet.Cells[row, 2].Value),
-                                productsSheet.Cells[row, 3].Value?.ToString() ?? "",
-                                productsSheet.Cells[row, 4].Value?.ToString() ?? "",
-                                Convert.ToInt32(productsSheet.Cells[row, 5].Value),
-                                Convert.ToDecimal(productsSheet.Cells[row, 6].Value)
-                            ));
-                        }
-                    }
-                    Console.WriteLine($"Загружено товаров: {_products.Count}");
-                }
-                var movementsSheet = package.Workbook.Worksheets["Движение товаров"];
-                if (movementsSheet != null && movementsSheet.Dimension != null)
-                {
-                    for (int row = 2; row <= movementsSheet.Dimension.End.Row; row++)
-                    {
-                        if (movementsSheet.Cells[row, 1].Value != null)
-                        {
-                            _movements.Add(new ProductMovement(
-                                Convert.ToInt32(movementsSheet.Cells[row, 1].Value),
-                                DateTime.FromOADate(Convert.ToDouble(movementsSheet.Cells[row, 2].Value)),
-                                Convert.ToInt32(movementsSheet.Cells[row, 3].Value),
-                                Convert.ToInt32(movementsSheet.Cells[row, 4].Value),
-                                movementsSheet.Cells[row, 5].Value?.ToString() ?? "",
-                                Convert.ToInt32(movementsSheet.Cells[row, 6].Value),
-                                movementsSheet.Cells[row, 7].Value?.ToString() ?? ""
-                            ));
-                        }
-                    }
-                    Console.WriteLine($"Загружено движений товаров: {_movements.Count}");
-                }
+                Console.WriteLine($"Загружено категорий: {_categories.Count}");
             }
+
+            // Чтение листа "Магазин"
+            Worksheet storesSheet = workbook.Worksheets["Магазин"];
+            if (storesSheet != null && storesSheet.Cells.MaxDataRow >= 0)
+            {
+                for (int row = 1; row <= storesSheet.Cells.MaxDataRow; row++)
+                {
+                    if (storesSheet.Cells[row, 0].Value != null)
+                    {
+                        _stores.Add(new Store(
+                            Convert.ToInt32(storesSheet.Cells[row, 0].Value),
+                            storesSheet.Cells[row, 1].Value?.ToString() ?? "",
+                            storesSheet.Cells[row, 2].Value?.ToString() ?? ""
+                        ));
+                    }
+                }
+                Console.WriteLine($"Загружено магазинов: {_stores.Count}");
+            }
+
+            // Чтение листа "Товар"
+            Worksheet productsSheet = workbook.Worksheets["Товар"];
+            if (productsSheet != null && productsSheet.Cells.MaxDataRow >= 0)
+            {
+                for (int row = 1; row <= productsSheet.Cells.MaxDataRow; row++)
+                {
+                    if (productsSheet.Cells[row, 0].Value != null)
+                    {
+                        _products.Add(new Product(
+                            Convert.ToInt32(productsSheet.Cells[row, 0].Value),
+                            Convert.ToInt32(productsSheet.Cells[row, 1].Value),
+                            productsSheet.Cells[row, 2].Value?.ToString() ?? "",
+                            productsSheet.Cells[row, 3].Value?.ToString() ?? "",
+                            Convert.ToInt32(productsSheet.Cells[row, 4].Value),
+                            Convert.ToDecimal(productsSheet.Cells[row, 5].Value)
+                        ));
+                    }
+                }
+                Console.WriteLine($"Загружено товаров: {_products.Count}");
+            }
+
+            // Чтение листа "Движение товаров"
+            Worksheet movementsSheet = workbook.Worksheets["Движение товаров"];
+            if (movementsSheet != null && movementsSheet.Cells.MaxDataRow >= 0)
+            {
+                for (int row = 1; row <= movementsSheet.Cells.MaxDataRow; row++)
+                {
+                    if (movementsSheet.Cells[row, 0].Value != null)
+                    {
+                        _movements.Add(new ProductMovement(
+                            Convert.ToInt32(movementsSheet.Cells[row, 0].Value),
+                            DateTime.FromOADate(Convert.ToDouble(movementsSheet.Cells[row, 1].Value)),
+                            Convert.ToInt32(movementsSheet.Cells[row, 2].Value),
+                            Convert.ToInt32(movementsSheet.Cells[row, 3].Value),
+                            movementsSheet.Cells[row, 4].Value?.ToString() ?? "",
+                            Convert.ToInt32(movementsSheet.Cells[row, 5].Value),
+                            movementsSheet.Cells[row, 6].Value?.ToString() ?? ""
+                        ));
+                    }
+                }
+                Console.WriteLine($"Загружено движений товаров: {_movements.Count}");
+            }
+
+            UpdateCounters();
             Console.WriteLine("Данные успешно загружены из Excel файла");
         }
         catch (Exception ex)
@@ -211,6 +248,11 @@ public class DatabaseManager
         _movements.Add(new ProductMovement(4, new DateTime(2024, 8, 4), 3, 1003, "Продажа", 1, "Да"));
         _movements.Add(new ProductMovement(5, new DateTime(2024, 8, 5), 1, 1004, "Поступление", 5, "Нет"));
         _movements.Add(new ProductMovement(6, new DateTime(2024, 8, 5), 1, 1004, "Продажа", 2, "Нет"));
+
+        _nextMovementId = 7;
+        _nextProductArticle = 1006;
+        _nextStoreId = 5;
+        _nextCategoryId = 5; 
         
         Console.WriteLine("Созданы тестовые данные:");
         Console.WriteLine($"- Категорий: {_categories.Count}");
@@ -471,7 +513,7 @@ public class DatabaseManager
         var salesData = from m in _movements
                        join s in _stores on m.StoreId equals s.Id
                        join p in _products on m.Article equals p.Article
-                       where m.OperationType == "Продажа" && s.District == "Ходунковый"
+                       where m.OperationType == "Продажа" && s.District == "Дзержинский"
                        select new { Quantity = m.PackageQuantity, Price = p.PricePerPackage };
 
         decimal totalSales = 0;
@@ -480,7 +522,7 @@ public class DatabaseManager
             totalSales += item.Quantity * item.Price;
         }
 
-        Console.WriteLine($"Общая стоимость продаж в Ходунковом районе: {totalSales:N0} руб.");
+        Console.WriteLine($"Общая стоимость продаж в Дзержинском районе: {totalSales:N0} руб.");
     }
 
     public void GetSalesByCategory()
@@ -541,67 +583,63 @@ public class DatabaseManager
     {
         try
         {
-            using (var package = new ExcelPackage())
+            Workbook workbook = new Workbook();
+            Worksheet categoriesSheet = workbook.Worksheets[0];
+            categoriesSheet.Name = "Категория";
+            categoriesSheet.Cells[0, 0].Value = "ID";
+            categoriesSheet.Cells[0, 1].Value = "Наименование";
+            categoriesSheet.Cells[0, 2].Value = "Возрастное ограничение";
+            for (int i = 0; i < _categories.Count; i++)
             {
-                var categoriesSheet = package.Workbook.Worksheets.Add("Категория");
-                categoriesSheet.Cells[1, 1].Value = "ID";
-                categoriesSheet.Cells[1, 2].Value = "Наименование";
-                categoriesSheet.Cells[1, 3].Value = "Возрастное ограничение";
-                for (int i = 0; i < _categories.Count; i++)
-                {
-                    categoriesSheet.Cells[i + 2, 1].Value = _categories[i].Id;
-                    categoriesSheet.Cells[i + 2, 2].Value = _categories[i].Name;
-                    categoriesSheet.Cells[i + 2, 3].Value = _categories[i].AgeRestriction;
-                }
-
-                var storesSheet = package.Workbook.Worksheets.Add("Магазин");
-                storesSheet.Cells[1, 1].Value = "ID";
-                storesSheet.Cells[1, 2].Value = "Район";
-                storesSheet.Cells[1, 3].Value = "Адрес";
-                for (int i = 0; i < _stores.Count; i++)
-                {
-                    storesSheet.Cells[i + 2, 1].Value = _stores[i].Id;
-                    storesSheet.Cells[i + 2, 2].Value = _stores[i].District;
-                    storesSheet.Cells[i + 2, 3].Value = _stores[i].Address;
-                }
-
-                var productsSheet = package.Workbook.Worksheets.Add("Товар");
-                productsSheet.Cells[1, 1].Value = "Артикул";
-                productsSheet.Cells[1, 2].Value = "ID категории";
-                productsSheet.Cells[1, 3].Value = "Наименование";
-                productsSheet.Cells[1, 4].Value = "Единица измерения";
-                productsSheet.Cells[1, 5].Value = "Количество в упаковке";
-                productsSheet.Cells[1, 6].Value = "Цена за упаковку";
-                for (int i = 0; i < _products.Count; i++)
-                {
-                    productsSheet.Cells[i + 2, 1].Value = _products[i].Article;
-                    productsSheet.Cells[i + 2, 2].Value = _products[i].CategoryId;
-                    productsSheet.Cells[i + 2, 3].Value = _products[i].Name;
-                    productsSheet.Cells[i + 2, 4].Value = _products[i].Unit;
-                    productsSheet.Cells[i + 2, 5].Value = _products[i].QuantityPerPackage;
-                    productsSheet.Cells[i + 2, 6].Value = _products[i].PricePerPackage;
-                }
-                var movementsSheet = package.Workbook.Worksheets.Add("Движение товаров");
-                movementsSheet.Cells[1, 1].Value = "ID операции";
-                movementsSheet.Cells[1, 2].Value = "Дата";
-                movementsSheet.Cells[1, 3].Value = "ID магазина";
-                movementsSheet.Cells[1, 4].Value = "Артикул";
-                movementsSheet.Cells[1, 5].Value = "Тип операции";
-                movementsSheet.Cells[1, 6].Value = "Количество упаковок";
-                movementsSheet.Cells[1, 7].Value = "Наличие карты клиента";
-                for (int i = 0; i < _movements.Count; i++)
-                {
-                    movementsSheet.Cells[i + 2, 1].Value = _movements[i].OperationId;
-                    movementsSheet.Cells[i + 2, 2].Value = _movements[i].Date.ToOADate();
-                    movementsSheet.Cells[i + 2, 3].Value = _movements[i].StoreId;
-                    movementsSheet.Cells[i + 2, 4].Value = _movements[i].Article;
-                    movementsSheet.Cells[i + 2, 5].Value = _movements[i].OperationType;
-                    movementsSheet.Cells[i + 2, 6].Value = _movements[i].PackageQuantity;
-                    movementsSheet.Cells[i + 2, 7].Value = _movements[i].HasCustomerCard;
-                }
-
-                package.SaveAs(new FileInfo(_filePath));
+                categoriesSheet.Cells[i + 1, 0].Value = _categories[i].Id;
+                categoriesSheet.Cells[i + 1, 1].Value = _categories[i].Name;
+                categoriesSheet.Cells[i + 1, 2].Value = _categories[i].AgeRestriction;
             }
+            Worksheet storesSheet = workbook.Worksheets.Add("Магазин");
+            storesSheet.Cells[0, 0].Value = "ID";
+            storesSheet.Cells[0, 1].Value = "Район";
+            storesSheet.Cells[0, 2].Value = "Адрес";
+            for (int i = 0; i < _stores.Count; i++)
+            {
+                storesSheet.Cells[i + 1, 0].Value = _stores[i].Id;
+                storesSheet.Cells[i + 1, 1].Value = _stores[i].District;
+                storesSheet.Cells[i + 1, 2].Value = _stores[i].Address;
+            }
+            Worksheet productsSheet = workbook.Worksheets.Add("Товар");
+            productsSheet.Cells[0, 0].Value = "Артикул";
+            productsSheet.Cells[0, 1].Value = "ID категории";
+            productsSheet.Cells[0, 2].Value = "Наименование";
+            productsSheet.Cells[0, 3].Value = "Единица измерения";
+            productsSheet.Cells[0, 4].Value = "Количество в упаковке";
+            productsSheet.Cells[0, 5].Value = "Цена за упаковку";
+            for (int i = 0; i < _products.Count; i++)
+            {
+                productsSheet.Cells[i + 1, 0].Value = _products[i].Article;
+                productsSheet.Cells[i + 1, 1].Value = _products[i].CategoryId;
+                productsSheet.Cells[i + 1, 2].Value = _products[i].Name;
+                productsSheet.Cells[i + 1, 3].Value = _products[i].Unit;
+                productsSheet.Cells[i + 1, 4].Value = _products[i].QuantityPerPackage;
+                productsSheet.Cells[i + 1, 5].Value = _products[i].PricePerPackage;
+            }
+            Worksheet movementsSheet = workbook.Worksheets.Add("Движение товаров");
+            movementsSheet.Cells[0, 0].Value = "ID операции";
+            movementsSheet.Cells[0, 1].Value = "Дата";
+            movementsSheet.Cells[0, 2].Value = "ID магазина";
+            movementsSheet.Cells[0, 3].Value = "Артикул";
+            movementsSheet.Cells[0, 4].Value = "Тип операции";
+            movementsSheet.Cells[0, 5].Value = "Количество упаковок";
+            movementsSheet.Cells[0, 6].Value = "Наличие карты клиента";
+            for (int i = 0; i < _movements.Count; i++)
+            {
+                movementsSheet.Cells[i + 1, 0].Value = _movements[i].OperationId;
+                movementsSheet.Cells[i + 1, 1].Value = _movements[i].Date.ToOADate();
+                movementsSheet.Cells[i + 1, 2].Value = _movements[i].StoreId;
+                movementsSheet.Cells[i + 1, 3].Value = _movements[i].Article;
+                movementsSheet.Cells[i + 1, 4].Value = _movements[i].OperationType;
+                movementsSheet.Cells[i + 1, 5].Value = _movements[i].PackageQuantity;
+                movementsSheet.Cells[i + 1, 6].Value = _movements[i].HasCustomerCard;
+            }
+            workbook.Save(_filePath);
             Console.WriteLine("Данные успешно сохранены в Excel файл");
         }
         catch (Exception ex)
