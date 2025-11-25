@@ -4,7 +4,7 @@ class Program
 {
     static void Main()
     {
-        DatabaseManager dbManager = new DatabaseManager("LR5-var1.xlsx");
+        DatabaseManager dbManager = new DatabaseManager("LR5-var1.xls");
         
         Console.WriteLine("=== Детские товары - Управление базой данных ===");
         
@@ -48,7 +48,7 @@ class Program
                         dbManager.GetTotalSalesInWalkerDistrict();
                         break;
                     case "7":
-                        dbManager.GetSalesByCategory();
+                        dbManager.GetTotalSales();
                         break;
                     case "8":
                         dbManager.GetAveragePriceByAgeGroup();
@@ -82,8 +82,8 @@ class Program
         Console.WriteLine("3. Удалить элемент");
         Console.WriteLine("4. Добавить элемент");
         Console.WriteLine("5. Запрос 1: Продажи с картой клиента");
-        Console.WriteLine("6. Запрос 2: Общие продажи в Ходунковом районе");
-        Console.WriteLine("7. Запрос 3: Продажи по категориям");
+        Console.WriteLine("6. Запрос 2: Общие продажи в Дзержинском районе");
+        Console.WriteLine("7. Запрос 3: Общая стоимость всех продаж");
         Console.WriteLine("8. Запрос 4: Средняя цена по возрастным группам");
         Console.WriteLine("9. Сохранить данные в Excel");
         Console.WriteLine("0. Выход");

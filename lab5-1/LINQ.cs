@@ -115,7 +115,6 @@ public class DatabaseManager
             }
         }
     }
-
     public void ReadFromExcel()
     {
         try
@@ -125,12 +124,15 @@ public class DatabaseManager
                 Console.WriteLine("Файл не найден. Используются тестовые данные.");
                 return;
             }
-
+            
             _movements.Clear();
             _products.Clear();
             _stores.Clear();
             _categories.Clear();
+            
             Workbook workbook = new Workbook(_filePath);
+            
+            // Чтение категорий
             Worksheet categoriesSheet = workbook.Worksheets["Категория"];
             if (categoriesSheet != null && categoriesSheet.Cells.MaxDataRow >= 0)
             {
@@ -148,7 +150,7 @@ public class DatabaseManager
                 Console.WriteLine($"Загружено категорий: {_categories.Count}");
             }
 
-            // Чтение листа "Магазин"
+            // Чтение магазинов
             Worksheet storesSheet = workbook.Worksheets["Магазин"];
             if (storesSheet != null && storesSheet.Cells.MaxDataRow >= 0)
             {
@@ -156,8 +158,21 @@ public class DatabaseManager
                 {
                     if (storesSheet.Cells[row, 0].Value != null)
                     {
+                        string storeIdValue = storesSheet.Cells[row, 0].Value.ToString();
+                        int storeId;
+                        
+                        // Преобразование "Р1", "Р2" в числовые ID
+                        if (storeIdValue.StartsWith("Р"))
+                        {
+                            storeId = int.Parse(storeIdValue.Substring(1));
+                        }
+                        else
+                        {
+                            storeId = Convert.ToInt32(storeIdValue);
+                        }
+                        
                         _stores.Add(new Store(
-                            Convert.ToInt32(storesSheet.Cells[row, 0].Value),
+                            storeId,
                             storesSheet.Cells[row, 1].Value?.ToString() ?? "",
                             storesSheet.Cells[row, 2].Value?.ToString() ?? ""
                         ));
@@ -166,7 +181,7 @@ public class DatabaseManager
                 Console.WriteLine($"Загружено магазинов: {_stores.Count}");
             }
 
-            // Чтение листа "Товар"
+            // Чтение товаров
             Worksheet productsSheet = workbook.Worksheets["Товар"];
             if (productsSheet != null && productsSheet.Cells.MaxDataRow >= 0)
             {
@@ -186,8 +201,6 @@ public class DatabaseManager
                 }
                 Console.WriteLine($"Загружено товаров: {_products.Count}");
             }
-
-            // Чтение листа "Движение товаров"
             Worksheet movementsSheet = workbook.Worksheets["Движение товаров"];
             if (movementsSheet != null && movementsSheet.Cells.MaxDataRow >= 0)
             {
@@ -195,10 +208,36 @@ public class DatabaseManager
                 {
                     if (movementsSheet.Cells[row, 0].Value != null)
                     {
+                        string storeIdValue = movementsSheet.Cells[row, 2].Value?.ToString();
+                        int storeId;
+                        if (storeIdValue != null && storeIdValue.StartsWith("Р"))
+                        {
+                            storeId = int.Parse(storeIdValue.Substring(1));
+                        }
+                        else
+                        {
+                            storeId = Convert.ToInt32(storeIdValue);
+                        }
+                        DateTime date;
+                        var dateValue = movementsSheet.Cells[row, 1].Value;
+                        
+                        if (dateValue is DateTime)
+                        {
+                            date = (DateTime)dateValue;
+                        }
+                        else if (dateValue is string dateString)
+                        {
+                            date = DateTime.Parse(dateString);
+                        }
+                        else
+                        {
+                            date = DateTime.FromOADate(Convert.ToDouble(dateValue));
+                        }
+                        
                         _movements.Add(new ProductMovement(
                             Convert.ToInt32(movementsSheet.Cells[row, 0].Value),
-                            DateTime.FromOADate(Convert.ToDouble(movementsSheet.Cells[row, 1].Value)),
-                            Convert.ToInt32(movementsSheet.Cells[row, 2].Value),
+                            date,
+                            storeId,
                             Convert.ToInt32(movementsSheet.Cells[row, 3].Value),
                             movementsSheet.Cells[row, 4].Value?.ToString() ?? "",
                             Convert.ToInt32(movementsSheet.Cells[row, 5].Value),
@@ -215,6 +254,7 @@ public class DatabaseManager
         catch (Exception ex)
         {
             Console.WriteLine($"Ошибка при чтении файла: {ex.Message}");
+            Console.WriteLine($"Тип исключения: {ex.GetType()}");
             Console.WriteLine("Используются тестовые данные.");
         }
     }
@@ -506,6 +546,21 @@ public class DatabaseManager
             var product = (from p in _products where p.Article == item.Article select p).FirstOrDefault();
             Console.WriteLine($"{item} | Товар: {product?.Name}");
         }
+    } 
+    public void GetTotalSales()
+    {
+    var salesData = from m in _movements
+                   join p in _products on m.Article equals p.Article
+                   where m.OperationType == "Продажа"
+                   select new { Quantity = m.PackageQuantity, Price = p.PricePerPackage };
+
+    decimal totalSales = 0;
+    foreach (var item in salesData)
+    {
+        totalSales += item.Quantity * item.Price;
+    }
+
+    Console.WriteLine($"Общая стоимость всех продаж: {totalSales:N0} руб.");
     }
 
     public void GetTotalSalesInWalkerDistrict()
@@ -524,36 +579,6 @@ public class DatabaseManager
 
         Console.WriteLine($"Общая стоимость продаж в Дзержинском районе: {totalSales:N0} руб.");
     }
-
-    public void GetSalesByCategory()
-    {
-        var result = from m in _movements
-                    join p in _products on m.Article equals p.Article
-                    join c in _categories on p.CategoryId equals c.Id
-                    where m.OperationType == "Продажа"
-                    group new { Movement = m, Product = p, Category = c } by new { CategoryName = c.Name, Age = c.AgeRestriction } into g
-                    select new
-                    {
-                        Category = g.Key.CategoryName,
-                        AgeRestriction = g.Key.Age,
-                        TotalRevenue = (from item in g select item.Movement.PackageQuantity * item.Product.PricePerPackage).Sum(),
-                        TotalQuantity = (from item in g select item.Movement.PackageQuantity).Sum()
-                    };
-
-        Console.WriteLine("=== Продажи по категориям ===");
-        if (!result.Any())
-        {
-            Console.WriteLine("Нет данных");
-            return;
-        }
-        
-        foreach (var item in result)
-        {
-            Console.WriteLine($"Категория: {item.Category} ({item.AgeRestriction}), " +
-                            $"Выручка: {item.TotalRevenue:N0} руб., Количество: {item.TotalQuantity}");
-        }
-    }
-
     public void GetAveragePriceByAgeGroup()
     {
         var ageGroups = from p in _products
@@ -601,7 +626,7 @@ public class DatabaseManager
             storesSheet.Cells[0, 2].Value = "Адрес";
             for (int i = 0; i < _stores.Count; i++)
             {
-                storesSheet.Cells[i + 1, 0].Value = _stores[i].Id;
+                storesSheet.Cells[i + 1, 0].Value = $"Р{_stores[i].Id}";
                 storesSheet.Cells[i + 1, 1].Value = _stores[i].District;
                 storesSheet.Cells[i + 1, 2].Value = _stores[i].Address;
             }
@@ -632,8 +657,8 @@ public class DatabaseManager
             for (int i = 0; i < _movements.Count; i++)
             {
                 movementsSheet.Cells[i + 1, 0].Value = _movements[i].OperationId;
-                movementsSheet.Cells[i + 1, 1].Value = _movements[i].Date.ToOADate();
-                movementsSheet.Cells[i + 1, 2].Value = _movements[i].StoreId;
+                movementsSheet.Cells[i + 1, 1].Value = _movements[i].Date;;
+                movementsSheet.Cells[i + 1, 2].Value = $"Р{_movements[i].StoreId}";
                 movementsSheet.Cells[i + 1, 3].Value = _movements[i].Article;
                 movementsSheet.Cells[i + 1, 4].Value = _movements[i].OperationType;
                 movementsSheet.Cells[i + 1, 5].Value = _movements[i].PackageQuantity;
