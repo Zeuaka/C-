@@ -310,4 +310,5 @@ _nextMovementId, _nextProductArticle, _nextStoreId, _nextCategoryId — счет
 <img width="414" height="286" alt="image" src="https://github.com/user-attachments/assets/2ec901b3-efcf-4525-b470-1ccef5476ecd" />
 
 
+<img width="426" height="284" alt="image" src="https://github.com/user-attachments/assets/f14b0de2-ae94-43fa-8dd5-986a2a21fc92" />
 
